@@ -1,11 +1,11 @@
 #include "jhClass.h"
-#include "micro game engine.h"
-ostream& operator<<(ostream& cout, jhString& str)
+
+ostream& operator<<(ostream& cout,const jhString& str)
 {
 	cout << str.str;
 	return cout;
 }
-istream& operator>>(istream& cin, jhString& str)
+istream& operator>>(istream& cin,const jhString& str)
 {
 	cin >> str.str;
 	return cin;
@@ -14,7 +14,7 @@ jhString::jhString()
 {
 	this->str = "";
 }
-jhString::jhString(string str)
+jhString::jhString(const string& str)
 {
 	this->str = str;
 }
@@ -22,21 +22,21 @@ jhString::jhString(const char* str)
 {
 	this->str = string(str);
 }
-jhString jhString::operator+(jhString str)
+jhString jhString::operator+(const jhString& str)
 {
 	return jhString(this->str + str.str);
 }
-jhString jhString::operator=(jhString str)
+jhString jhString::operator=(const jhString& str)
 {
 	this->str = str.str;
 	return *this;
 }
-jhString jhString::operator+=(jhString str)
+jhString jhString::operator+=(const jhString& str)
 {
 	this->str += str.str;
 	return *this;
 }
-bool jhString::operator==(jhString str)
+bool jhString::operator==(const jhString& str)
 {
 	if (this->str == str.str)
 	{
@@ -52,11 +52,11 @@ float jhString::to_float()
 {
 	return atof(this->str.c_str());
 }
-int jhString::indexOf(string str)
+int jhString::indexOf(const string& str)
 {
 	return this->str.find(str);
 }
-int jhString::indexOf(jhString str)
+int jhString::indexOf(const jhString& str)
 {
 	return this->str.find(str.str);
 }
@@ -71,7 +71,7 @@ string jhString::substr(int begin, int end)
 	else
 		return this->str;
 }
-string jhString::substr(string leftStr, string rightStr)//取出中间字符串
+string jhString::substr(const string& leftStr,const string& rightStr)//取出中间字符串
 {
 	int left = this->str.find(leftStr);
 	int right;
@@ -166,23 +166,23 @@ float jhFraction::to_float()
 	return float(s) / m;
 }
 
-jhFraction jhFraction::operator+(jhFraction& num)
+jhFraction jhFraction::operator+(const jhFraction& num)
 {
 	return jhFraction(this->s * num.m + this->m * num.s, this->m * num.m);
 }
-jhFraction jhFraction::operator-(jhFraction& num)
+jhFraction jhFraction::operator-(const jhFraction& num)
 {
 	return jhFraction(this->s * num.m - this->m * num.s, this->m * num.m);
 }
-jhFraction jhFraction::operator*(jhFraction& num)
+jhFraction jhFraction::operator*(const jhFraction& num)
 {
 	return jhFraction(this->s * num.s, this->m * num.m);
 }
-jhFraction jhFraction::operator/(jhFraction& num)
+jhFraction jhFraction::operator/(const jhFraction& num)
 {
 	return jhFraction(this->s * num.m, this->m * num.s);
 }
-bool jhFraction::operator>(jhFraction& num)
+bool jhFraction::operator>(const jhFraction& num)
 {
 	if (this->s * num.m - num.s - this->m > 0)
 		return true;
@@ -196,7 +196,7 @@ bool jhFraction::operator>(float num)
 	else
 		return false;
 }
-bool jhFraction::operator>=(jhFraction& num)
+bool jhFraction::operator>=(const jhFraction& num)
 {
 	if (*this > num || *this == num)
 	{
@@ -212,7 +212,7 @@ bool jhFraction::operator>=(float num)
 	else
 		return false;
 }
-bool jhFraction::operator<=(jhFraction& num)
+bool jhFraction::operator<=(const jhFraction& num)
 {
 	if (*this < num || *this == num)
 	{
@@ -228,7 +228,7 @@ bool jhFraction::operator<=(float num)
 	else
 		return false;
 }
-bool jhFraction::operator<(jhFraction& num)
+bool jhFraction::operator<(const jhFraction& num)
 {
 	if (this->s * num.m - num.s - this->m > 0)
 		return false;
@@ -242,7 +242,7 @@ bool jhFraction::operator<(float num)
 	else
 		return false;
 }
-bool jhFraction::operator==(jhFraction& num)
+bool jhFraction::operator==(const jhFraction& num)
 {
 	if (this->s * num.m - num.s - this->m == 0)
 		return true;
@@ -256,12 +256,12 @@ bool jhFraction::operator==(float num)
 	else
 		return false;
 }
-jhFraction& jhFraction::operator+=(jhFraction& num)
+jhFraction& jhFraction::operator+=(const jhFraction& num)
 {
 	*this = *this + num;
 	return *this;
 }
-jhFraction& jhFraction::operator-=(jhFraction& num)
+jhFraction& jhFraction::operator-=(const jhFraction& num)
 {
 	*this = *this - num;
 	return *this;
@@ -276,27 +276,27 @@ jhVector2::jhVector2(float x, float y)
 	this->x = x;
 	this->y = y;
 }
-jhVector2 jhVector2::operator=(jhVector2 v2)
+jhVector2& jhVector2::operator=(const jhVector2& v2)
 {
 	this->x = v2.x;
 	this->y = v2.y;
 	return *this;
 }
-jhVector2 jhVector2::operator+(jhVector2 v2)
+jhVector2 jhVector2::operator+(const jhVector2& v2)
 {
 	return jhVector2(this->x + v2.x, this->y + v2.y);
 }
-jhVector2 jhVector2::operator+=(jhVector2 v2)
+jhVector2& jhVector2::operator+=(const jhVector2& v2)
 {
 	this->x += v2.x;
 	this->y += v2.y;
 	return *this;
 }
-jhVector2 jhVector2::operator-(jhVector2 v2)
+jhVector2 jhVector2::operator-(const jhVector2& v2)
 {
 	return jhVector2(this->x - v2.x, this->y - v2.y);
 }
-jhVector2 jhVector2::operator-=(jhVector2 v2)
+jhVector2& jhVector2::operator-=(const jhVector2& v2)
 {
 	this->x -= v2.x;
 	this->y -= v2.y;
@@ -310,42 +310,41 @@ jhVector2 jhVector2::operator/(float i)
 {
 	return jhVector2(this->x / i, this->y / i);
 }
-bool jhVector2::operator==(jhVector2& v2)
+bool jhVector2::operator==(const jhVector2& v2)
 {
 	if (this->x == v2.x && this->y == v2.y)
 		return true;
 	else
 		return false;
 }
-double jhVector2::destance(jhVector2 obj)
+double jhVector2::destance(const jhVector2& obj)
 {
 	return sqrt(pow(this->x - obj.x, 2) + pow(this->y - obj.y, 2));
 }
 
-double jhVector2::cross_product(jhVector2 objective)
+double jhVector2::cross_product(const jhVector2& objective)
 {
 	return this->x * objective.y - this->y * objective.x;
 }
 
-double jhVector2::dot_product(jhVector2 objective)
+double jhVector2::dot_product(const jhVector2& objective)
 {
 	return this->x * objective.x + this->y * objective.y;
 }
 
 template<typename T>
-T* jhList<T>::addList(T value)
+void jhList<T>::addList(T value)
 {
 	node* newlist = new node;
 	newlist->p_next = NULL;
 	newlist->value = value;
-	auto p = this->p_first;
+	node* p = this->p_first;
 	while (p->p_next != NULL)
 	{
 		p = p->p_next;
 	}
 	newlist->p_back = p;
 	p->p_next = newlist;
-	return &newlist->value;
 }
 
 template<typename T>
@@ -425,5 +424,3 @@ template class jhList<jhString>;
 template class jhList<jhFraction>;
 template class jhList<jhVector2>;
 template class jhList<void*>;
-
-template jhList<GameObject>;

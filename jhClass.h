@@ -12,29 +12,29 @@ using namespace std;
 class jhString
 {
 public:
-	friend ostream& operator<<(ostream& cout, jhString& str);
-	friend istream& operator>>(istream& cin, jhString& str);
+	friend ostream& operator<<(ostream& cout,const jhString& str);
+	friend istream& operator>>(istream& cin,const jhString& str);
 	jhString();
-	jhString(string str);
+	jhString(const string& str);
 	jhString(const char* str);
-	jhString operator+(jhString str);
-	jhString operator=(jhString str);
-	jhString operator+=(jhString str);
-	bool operator==(jhString str);
+	jhString operator+(const jhString& str);
+	jhString operator=(const jhString& str);
+	jhString operator+=(const jhString& str);
+	bool operator==(const jhString& str);
 	//字符串转换为整型数据(如果可以)
 	int to_int();
 	//字符串转换为浮点型数据(如果可以)
 	float to_float();
 	//返回字符串索引，从0开始
-	int indexOf(string str);
+	int indexOf(const string& str);
 	//返回字符串索引，从0开始
-	int indexOf(jhString str);
+	int indexOf(const jhString& str);
 	//转换为std::string
 	string to_stdString();
 	//字符串截取，从起始位置截取到终点位置，从0开始
 	string substr(int begin, int end);
 	//字符串截取,从左边字符截取到右边字符(不包含边界)，若找不到左边，返回空；若找到左边，但找不到右边，返回左边到末尾
-	string substr(string leftStr, string rightStr);
+	string substr(const string& leftStr,const string& rightStr);
 
 private:
 	string str;
@@ -51,21 +51,21 @@ public:
 	jhFraction(int s,int m);
 	void simplify();
 	float to_float();
-	jhFraction operator+(jhFraction& num);
-	jhFraction& operator+=(jhFraction& num);
-	jhFraction operator-(jhFraction& num);
-	jhFraction& operator-=(jhFraction& num);
-	jhFraction operator*(jhFraction& num);
-	jhFraction operator/(jhFraction& num);
-	bool operator>(jhFraction& num);
+	jhFraction operator+(const jhFraction& num);
+	jhFraction& operator+=(const jhFraction& num);
+	jhFraction operator-(const jhFraction& num);
+	jhFraction& operator-=(const jhFraction& num);
+	jhFraction operator*(const jhFraction& num);
+	jhFraction operator/(const jhFraction& num);
+	bool operator>(const jhFraction& num);
 	bool operator>(float num);
-	bool operator>=(jhFraction& num);
+	bool operator>=(const jhFraction& num);
 	bool operator>=(float num);
-	bool operator<(jhFraction& num);
+	bool operator<(const jhFraction& num);
 	bool operator<(float num);
-	bool operator<=(jhFraction& num);
+	bool operator<=(const jhFraction& num);
 	bool operator<=(float num);
-	bool operator==(jhFraction& num);
+	bool operator==(const jhFraction& num);
 	bool operator==(float num);
 private:
 	int s, m;/* （s/m分数类型）*/
@@ -78,20 +78,20 @@ public:
 	float x, y;
 	jhVector2();
 	jhVector2(float x,float y);
-	jhVector2 operator=(jhVector2 v2);
-	jhVector2 operator+(jhVector2 v2);
-	jhVector2 operator+=(jhVector2 v2);
-	jhVector2 operator-(jhVector2 v2);
-	jhVector2 operator-=(jhVector2 v2);
+	jhVector2& operator=(const jhVector2& v2);
+	jhVector2 operator+(const jhVector2& v2);
+	jhVector2& operator+=(const jhVector2& v2);
+	jhVector2 operator-(const jhVector2& v2);
+	jhVector2& operator-=(const jhVector2& v2);
 	jhVector2 operator*(float i);
 	jhVector2 operator/(float i);
-	bool operator==(jhVector2 & v2);
+	bool operator==(const jhVector2& v2);
 	//求坐标距离
-	double destance(jhVector2 objective);
+	double destance(const jhVector2& objective);
 	//求向量叉乘
-	double cross_product(jhVector2 objective);
+	double cross_product(const jhVector2& objective);
 	//求向量点乘
-	double dot_product(jhVector2 objective);
+	double dot_product(const jhVector2& objective);
 };
 
 //jhList:链表模板类(无序链表)
@@ -108,7 +108,7 @@ public:
 	//链表头
 	node* p_first;
 	//在后面添加节点
-	T* addList(T value);
+	void addList(T value);
 	//删除节点
 	void deleteList(node* list);
 	//默认构造函数
