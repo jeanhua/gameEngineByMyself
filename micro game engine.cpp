@@ -6,15 +6,15 @@ HWND Game::initWindow(int width, int height)
     return initgraph(width, height,1);
 }
 
-void Game::objectMove(vector<GameObject>::iterator& gameObj)
+void Game::objectMove(vector<GameObject*>::iterator& gameObj)
 {
 	//位置改变
-	if (gameObj->isStatic == true)
+	if ((*gameObj)->isStatic == true)
 		return;
-	gameObj->position = gameObj->position + (gameObj->speed * ((float)deltaTime / 1000))*scale;
-	//gameObj->speed = gameObj->speed * 0.999;
+	(*gameObj)->position = (*gameObj)->position + ((*gameObj)->speed * ((float)deltaTime / 1000))*scale;
+	//(*gameObj)->speed = (*gameObj)->speed * 0.999;
 	//动量定理 V=F*t/m
-	gameObj->speed = gameObj->speed + gameObj->force * ((float)deltaTime / 1000) / gameObj->mass;
+	(*gameObj)->speed = (*gameObj)->speed + (*gameObj)->force * ((float)deltaTime / 1000) / (*gameObj)->mass;
 	//碰撞检测
 	collisionEnter(gameObj);
 }
@@ -23,7 +23,7 @@ void Game::printGameObject()
 {
 	for (auto it = gameObject->begin(); it!= gameObject->end(); it++)
 	{
-		putimagePNG(it->position.x, it->position.y, it->img);
+		putimagePNG((*it)->position.x, (*it)->position.y, (*it)->img);
 	}
 }
 
@@ -108,39 +108,43 @@ jhVector2 calculateCollisionPosition(const jhVector2& position1, const jhVector2
 	return newPosition1;
 }
 //碰撞检测
-vector<GameObject>::iterator Game::collisionEnter(vector<GameObject>::iterator& gameObj)
+vector<GameObject*>::iterator Game::collisionEnter(vector<GameObject*>::iterator& gameObj)
 {
-	if (gameObj->position.x<0 || gameObj->position.x + gameObj->size.x>getwidth())
+	//边界判断
+	if ((*gameObj)->position.x<0 || (*gameObj)->position.x + (*gameObj)->size.x>getwidth())
 	{
-		gameObj->speed.x = -gameObj->speed.x * gameObj->elasticity;
-		if (gameObj->position.x < 0)
-			gameObj->position.x = 0;
+		(*gameObj)->speed.x = -(*gameObj)->speed.x * (*gameObj)->elasticity;
+		if ((*gameObj)->position.x < 0)
+			(*gameObj)->position.x = 0;
 		else
-			gameObj->position.x = getwidth() - gameObj->size.x;
+			(*gameObj)->position.x = getwidth() - (*gameObj)->size.x;
 	}
-	else if (gameObj->position.y<0 || gameObj->position.y + gameObj->size.y>getheight())
+	else if ((*gameObj)->position.y<0 || (*gameObj)->position.y + (*gameObj)->size.y>getheight())
 	{
-		gameObj->speed.y = -gameObj->speed.y * gameObj->elasticity;
-		if (gameObj->position.y < 0)
-			gameObj->position.y = 0;
+		if ((*gameObj)->position.y + (*gameObj)->size.y > getheight())
+			(*gameObj)->speed.y = -(*gameObj)->speed.y * (*gameObj)->elasticity*(*gameObj)->elasticity;
 		else
-			gameObj->position.y = getheight() - gameObj->size.y;
+			(*gameObj)->speed.y = -(*gameObj)->speed.y * (*gameObj)->elasticity;
+		if ((*gameObj)->position.y < 0)
+			(*gameObj)->position.y = 0;
+		else
+			(*gameObj)->position.y = getheight() - (*gameObj)->size.y;
 	}
 	for (auto it = gameObject->begin(); it != gameObject->end(); it++)
 	{
-		jhVector2 middle2 = jhVector2(it->position.x + it->size.x / 2, it->position.y + it->size.y / 2);
-		jhVector2 middle1 = jhVector2(gameObj->position.x + gameObj->size.x / 2, gameObj->position.y + gameObj->size.y / 2);
-		jhVector2 position1 = gameObj->position;
-		jhVector2 position2 = it->position;
-		if (it!=gameObj && middle1.destance(middle2) <= it->round + gameObj->round)
+		jhVector2 middle2 = jhVector2((*it)->position.x + (*it)->size.x / 2, (*it)->position.y + (*it)->size.y / 2);
+		jhVector2 middle1 = jhVector2((*gameObj)->position.x + (*gameObj)->size.x / 2, (*gameObj)->position.y + (*gameObj)->size.y / 2);
+		jhVector2 position1 = (*gameObj)->position;
+		jhVector2 position2 = (*it)->position;
+		if (it!=gameObj && middle1.destance(middle2) <= (*it)->round + (*gameObj)->round)
 		{
 			cout << middle1.destance(middle2)<< " 发生碰撞！" << endl;
-			jhVector2 v1_0 = gameObj->speed;
-			jhVector2 v2_0 = it->speed;
-			gameObj->speed = calculateCollisionVelocity(v1_0, gameObj->mass, gameObj->elasticity,middle1, v2_0, it->mass, middle2);
-			it->speed = calculateCollisionVelocity(v2_0, gameObj->mass,it->elasticity, middle2, v1_0, it->mass, middle1);
-			gameObj->position = calculateCollisionPosition(position1, v1_0, gameObj->mass, position2, v2_0, it->mass, (float)deltaTime / 1000);
-			it->position = calculateCollisionPosition(position2, v2_0, it->mass, position1, v1_0, gameObj->mass, (float)deltaTime/1000);
+			jhVector2 v1_0 = (*gameObj)->speed;
+			jhVector2 v2_0 = (*it)->speed;
+			(*gameObj)->speed = calculateCollisionVelocity(v1_0, (*gameObj)->mass, (*gameObj)->elasticity,middle1, v2_0, (*it)->mass, middle2);
+			(*it)->speed = calculateCollisionVelocity(v2_0, (*gameObj)->mass,(*it)->elasticity, middle2, v1_0, (*it)->mass, middle1);
+			(*gameObj)->position = calculateCollisionPosition(position1, v1_0, (*gameObj)->mass, position2, v2_0, (*it)->mass, (float)deltaTime / 1000);
+			(*it)->position = calculateCollisionPosition(position2, v2_0, (*it)->mass, position1, v1_0, (*gameObj)->mass, (float)deltaTime/1000);
 			return it;
 		}
 	}
@@ -156,17 +160,16 @@ void Game::addObject(string name, LPCTSTR img_fileName, jhVector2 position, floa
 	jhVector2 size = jhVector2(reWidth, reHeight);
 	tmpdata->size = size;
 	tmpdata->name = name;
-	tmpdata->round = (tmpdata->size.x + tmpdata->size.y) / 4;
+	tmpdata->round = (tmpdata->size.x + tmpdata->size.y) / 4-11;
 	loadimage(tmpdata->img, img_fileName, size.y, size.x);
-	gameObject->push_back(*tmpdata);
-	delete tmpdata;
+	gameObject->push_back(tmpdata);
 }
 
-vector<GameObject>::iterator Game::getObject(string name)
+vector<GameObject*>::iterator Game::getObject(string name)
 {
 	for (auto it = gameObject->begin(); it != gameObject->end(); it++)
 	{
-		if (it->name == name)
+		if ((*it)->name == name)
 		{
 			return it;
 		}
@@ -174,12 +177,13 @@ vector<GameObject>::iterator Game::getObject(string name)
 	return gameObject->end();
 }
 
-bool Game::deleteObject(vector<GameObject>::iterator gameobj)
+bool Game::deleteObject(vector<GameObject*>::iterator gameobj)
 {
 	for (auto it = gameObject->begin(); it != gameObject->end(); it++)
 	{
 		if (it==gameobj)
 		{
+			delete* it;
 			gameObject->erase(it);
 			return true;
 		}
